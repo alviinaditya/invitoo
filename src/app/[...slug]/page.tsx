@@ -1,4 +1,4 @@
-import { loadThemeComponent } from "@/lib/themes/load";
+import LoadTheme from "@/lib/themes/load";
 import { type ThemeName, themeNames } from "@/lib/themes/list";
 import { redirect } from "next/navigation";
 
@@ -13,10 +13,10 @@ export const generateStaticParams = async () => {
 };
 
 export default async function Page(props: {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
-  const slug = decodeURI(params.slug.join("/"));
+  const slug = decodeURI(params.slug);
   if (!slug) return;
 
   const allData: { [key: string]: WeddingData } = {
@@ -34,6 +34,5 @@ export default async function Page(props: {
   const data = allData[slug];
   if (!data) redirect("/");
   const safeTheme = themeNames.includes(data.theme) ? data.theme : "ThemeOne";
-  const Theme = loadThemeComponent(safeTheme);
-  return <Theme />;
+  return <LoadTheme themeName={safeTheme} />;
 }
